@@ -1,30 +1,33 @@
-const getData = () => {
-  return fetch ('data/db.json')
-    .then(response => response.json())
-    .catch(error => console.log(error));
-};
-
 const sendData = (data) => {
-  return fetch ('https://jsonplaceholder.typicode.com/posts', {
-    method: 'POST',
-    body: JSON.stringify(data),
-    headers: {
-      'Content-type': 'application/json; charset=UTF-8'
-    }
-  }).catch(error => console.log(error));
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', 'https://jsonplaceholder.typicode.com/posts');
+    xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+    xhr.send(JSON.stringify(data));
+    xhr.onload = () => {
+      if(xhr.status < 200 || xhr.status > 299) {
+        console.log(`Ошибка ${xhr.status}: ${xhr.statusText}`);
+      } else {
+        
+        console.log(xhr.response);
+      }
+    };
 };
 
-getData()
-  .then(data => sendData(data))
-  .catch(error => console.log(error));
+const xhrGet = new XMLHttpRequest();
 
-  // с проверкой того, что отправили
-// getData()
-//   .then(data => sendData(data))
-//   .then(response => response.json())
-//   .then(data => console.log(data))
-//   .catch(error => console.log(error));
 
+xhrGet.open('GET', 'data/db.json');
+xhrGet.responseType = 'json';
+xhrGet.send();
+xhrGet.onload = () => {
+  if(xhrGet.status != 200) {
+    console.log(`Ошибка ${xhrGet.status}: ${xhrGet.statusText}`);
+  } else {
+    console.log(xhrGet.response);
+    sendData(xhrGet.response);
+    
+  }
+};
 
 
 
